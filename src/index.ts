@@ -1,6 +1,4 @@
-/**
- * Inconsequential Thinking MCP Server
- *
+/** Inconsequential Thinking MCP Server
  * A lightweight MCP server that integrates sequential thinking capabilities
  * with personal Claude slash commands.
  */
@@ -15,9 +13,7 @@ import { SLASH_COMMANDS } from './commands.js';
 const MEMORY_LIMIT = 50;
 const thoughtHistory: Thought[] = [];
 
-/**
- * Input schema for the inconsequential_thinking tool
- */
+/** Input schema for the inconsequential_thinking tool */
 const ThinkingInputSchema = z.object({
   thought: z.string().describe('The current thought text'),
   thought_number: z.number().int().positive().describe('Current thought number'),
@@ -27,9 +23,7 @@ const ThinkingInputSchema = z.object({
 
 type ThinkingInput = z.infer<typeof ThinkingInputSchema>;
 
-/**
- * Add a thought to history and manage memory limit
- */
+/** Add a thought to history and manage memory limit */
 function recordThought(thought: string, number: number, totalEstimate: number): void {
   thoughtHistory.push({
     text: thought,
@@ -44,9 +38,7 @@ function recordThought(thought: string, number: number, totalEstimate: number): 
   }
 }
 
-/**
- * Extract keywords from thought text for matching
- */
+/** Extract keywords from thought text for matching */
 function extractKeywords(text: string): string[] {
   // Convert to lowercase and split on word boundaries
   const words = text.toLowerCase().match(/\b\w+\b/g) || [];
@@ -57,9 +49,7 @@ function extractKeywords(text: string): string[] {
   return words.filter(word => !stopWords.has(word) && word.length > 2);
 }
 
-/**
- * Calculate relevance score between thought keywords and command keywords
- */
+/** Calculate relevance score between thought keywords and command keywords */
 function calculateRelevance(thoughtKeywords: string[], commandKeywords: string[]): number {
   const matches = thoughtKeywords.filter(tk =>
     commandKeywords.some(ck => ck.includes(tk) || tk.includes(ck))
@@ -74,9 +64,7 @@ function calculateRelevance(thoughtKeywords: string[], commandKeywords: string[]
   return Math.min(percentageMatch + absoluteBonus, 1.0);
 }
 
-/**
- * Analyze thought and recommend relevant commands
- */
+/** Analyze thought and recommend relevant commands */
 function analyzeAndRecommend(thought: string): ThinkingResponse {
   const thoughtKeywords = extractKeywords(thought);
 
@@ -119,9 +107,7 @@ function analyzeAndRecommend(thought: string): ThinkingResponse {
   };
 }
 
-/**
- * Create and configure the MCP server
- */
+/** Create and configure the MCP server */
 const mcp = new McpServer({
   name: 'inconsequential-thinking',
   version: '0.1.0',
